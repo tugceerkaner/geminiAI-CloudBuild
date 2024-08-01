@@ -1,29 +1,26 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/dist-sys-week2/gemini-ai-backend:latest', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/dist-sys-week2/gemini-ai-backend:latest']
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - 'apply'
-  - '-f'
-  - 'k8s/namespace.yaml'
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - 'apply'
-  - '-f'
-  - 'k8s/deployment.yaml'
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - 'apply'
-  - '-f'
-  - 'k8s/service.yaml'
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster'
+  # Create docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/dist-sys-week2/gemini-ai-backend:latest', '.']
+
+  # Push docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/dist-sys-week2/gemini-ai-backend:latest']
+
+  # Namespace vreation
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'k8s/namespace.yaml']
+    env: ['CLOUDSDK_COMPUTE_ZONE=us-central1-a', 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster']
+
+  # apply deployment
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'k8s/deployment.yaml', '--namespace=gemini-ai']
+    env: ['CLOUDSDK_COMPUTE_ZONE=us-central1-a', 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster']
+
+  # apply service
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'k8s/service.yaml', '--namespace=gemini-ai']
+    env: ['CLOUDSDK_COMPUTE_ZONE=us-central1-a', 'CLOUDSDK_CONTAINER_CLUSTER=my-cluster']
 
 options:
   logging: CLOUD_LOGGING_ONLY
