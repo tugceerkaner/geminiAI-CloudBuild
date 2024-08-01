@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gemini-ai-backend
+  namespace: gemini-ai
+  labels:
+    app: gemini-ai-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gemini-ai-backend
+  template:
+    metadata:
+      labels:
+        app: gemini-ai-backend
+    spec:
+      containers:
+      - name: gemini-ai-backend
+        image: gcr.io/dist-sys-week2/gemini-ai-backend:latest
+        ports:
+        - containerPort: 5000
